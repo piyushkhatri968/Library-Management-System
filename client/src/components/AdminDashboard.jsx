@@ -58,7 +58,6 @@ const AdminDashboard = () => {
     );
     setTotalBorrowedBooks(numberOfTotalBorrowedBooks.length);
     setTotalReturnedBooks(numberOfTotalReturnedBooks.length);
-    allborrowedBooks.map((book) => console.log(book.book.id.title));
   }, [users, allborrowedBooks]);
 
   const data = {

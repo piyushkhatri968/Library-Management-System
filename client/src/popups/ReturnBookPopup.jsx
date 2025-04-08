@@ -4,7 +4,8 @@ import { returnBook } from "../store/slices/borrowSlice";
 import { toggleReturnBookPopup } from "../store/slices/popUpSlice";
 
 const ReturnBookPopup = ({ bookId, email }) => {
-  // console.log(bookId);
+  bookId = bookId._id;
+  console.log(bookId);
   const dispatch = useDispatch();
   const handleReturnBook = (e) => {
     e.preventDefault();

@@ -1,8 +1,11 @@
+import { Error } from "mongoose";
 import { catchAsyncErrors } from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../middlewares/errorMiddlewares.js";
 import { User } from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import { v2 as cloudinary } from "cloudinary";
+import { sendEmail } from "../utils/sendEmail.js";
+import { genereateRegisteredAsAdminEmailTemplate } from "../utils/emailTemplates.js";
 
 export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
   const users = await User.find({ accountVerified: true });
@@ -26,7 +29,7 @@ export const registerNewAdmin = catchAsyncErrors(async (req, res, next) => {
   if (isRegisterd) {
     return next(new ErrorHandler("Account already registered.", 400));
   }
- 
+
   if (password.length < 8 || password.length > 16) {
     return next(
       new ErrorHandler("Password must be between 8 and 16 characters.", 400)
@@ -65,9 +68,37 @@ export const registerNewAdmin = catchAsyncErrors(async (req, res, next) => {
       url: cloudinaryResponse.secure_url,
     },
   });
+  const message = genereateRegisteredAsAdminEmailTemplate(
+    name,
+    email,
+    password
+  );
+  await sendEmail({
+    email: admin.email,
+    subject: "Account Registered Successfully",
+    message,
+  });
   res.status(201).json({
     success: true,
     message: "Admin registered successfully.",
     admin,
+  });
+});
+
+export const deleteUser = catchAsyncErrors(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return next(new ErrorHandler("User not found.", 404));
+  }
+  if (req.user.email === user.email) {
+    return next(new ErrorHandler("You can't delete yourself.", 403));
+  }
+  if (user.email === "piyushkhatri968@gmail.com") {
+    return next(new ErrorHandler("You can't delete the main admin.", 403));
+  }
+  await user.deleteOne();
+  res.status(200).json({
+    success: true,
+    message: "User deleted successfully.",
   });
 });

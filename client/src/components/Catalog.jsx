@@ -60,7 +60,6 @@ const Catalog = () => {
 
   const openReturnBookPopup = (bookId, email) => {
     setBorrowedBookId(bookId);
-    console.log(bookId);
     setEmail(email);
     dispatch(toggleReturnBookPopup());
   };
@@ -131,7 +130,7 @@ const Catalog = () => {
                     <td className="px-4 py-2">{index + 1}</td>
                     <td className="px-4 py-2">{book?.user.name}</td>
                     <td className="px-4 py-2">{book?.user.email}</td>
-                    <td className="px-4 py-2 text-sm">{book.book.id.title}</td>
+                    <td className="px-4 py-2 text-sm">{book.book?.id?.title}</td>
                     <td className="px-4 py-2">{book.price}</td>
                     <td className="px-4 py-2">{formatDate(book.dueDate)}</td>
                     <td className="px-4 py-2">

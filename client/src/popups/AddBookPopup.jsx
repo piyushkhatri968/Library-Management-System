@@ -29,7 +29,7 @@ const AddBookPopup = () => {
     <>
       {" "}
       <div className="fixed inset-0 bg-black bg-opacity-50 p-5 flex items-center justify-center z-50">
-        <div className="wfull bg-white rounded-lg shadow-lg md:w-1/3">
+        <div className="w-full bg-white rounded-lg shadow-lg md:w-1/3">
           <div className="p-6">
             <h3 className="text-xl font-bold mb-4">Add Book</h3>
             <form onSubmit={handleAddBook}>

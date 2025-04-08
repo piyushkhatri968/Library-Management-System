@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import { Borrow } from "./borrowModel.js";
 const bookSchema = new mongoose.Schema(
   {
     title: {
@@ -28,9 +28,24 @@ const bookSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true, // Ensure only Admin users create books
+    },
   },
   {
     timestamps: true,
+  }
+);
+
+bookSchema.pre(
+  "deleteOne",
+  { document: true, query: false },
+  async function (next) {
+    const bookId = this._id;
+    await Borrow.deleteMany({ "book.id": bookId });
+    next();
   }
 );
 

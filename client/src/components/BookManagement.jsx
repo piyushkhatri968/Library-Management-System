@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BookA, NotebookPen } from "lucide-react";
+import { BookA, NotebookPen, Trash2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   toggleAddBookPopup,
@@ -16,6 +16,8 @@ import Header from "../layout/Header";
 import AddBookPopup from "../popups/AddBookPopup";
 import ReadBookPopup from "../popups/ReadBookPopup";
 import RecordBookPopup from "../popups/RecordBookPopup";
+import axios from "axios";
+import { Frontend_URL } from "../../config";
 
 const BookManagement = () => {
   const dispatch = useDispatch();
@@ -76,6 +78,27 @@ const BookManagement = () => {
     return book.title.toLowerCase().includes(searchedKeyword);
   });
 
+  const [deleteModelOpen, setDeleteModelOpen] = useState(false);
+  const [bookID, setBookID] = useState("");
+
+  const handleDeleteModel = (bookId) => {
+    setDeleteModelOpen(true);
+    setBookID(bookId);
+  };
+
+  const deleteBook = async () => {
+    try {
+      const res = await axios.delete(`${Frontend_URL}/book/delete/${bookID}`, {
+        withCredentials: true,
+      });
+      dispatch(fetchAllBooks());
+      toast.success(res.data.message);
+    } catch (error) {
+      toast.error(error.response?.data.message || "Unknown error occurred.");
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <main className="relative flex-1 p-6 pt-28">
@@ -114,6 +137,7 @@ const BookManagement = () => {
                   <th className="px-4 py-2 text-left">ID</th>
                   <th className="px-4 py-2 text-left">Name</th>
                   <th className="px-4 py-2 text-left">Author</th>
+                  <th className="px-4 py-2 text-left">Posted By</th>
                   {isAuthenticated && user?.role === "Admin" && (
                     <th className="px-4 py-2 text-left">Quantity</th>
                   )}
@@ -133,6 +157,7 @@ const BookManagement = () => {
                     <td className="px-4 py-2">{index + 1}</td>
                     <td className="px-4 py-2">{book.title}</td>
                     <td className="px-4 py-2">{book.author}</td>
+                    <td className="px-4 py-2">{book?.createdBy?.name}</td>
                     {isAuthenticated && user?.role === "Admin" && (
                       <td className="px-4 py-2">{book.quantity}</td>
                     )}
@@ -150,6 +175,10 @@ const BookManagement = () => {
                           onClick={() => openRecordBookPopup(book._id)}
                           className="cursor-pointer"
                         />
+                        <Trash2
+                          className="text-red-600 cursor-pointer"
+                          onClick={() => handleDeleteModel(book._id)}
+                        />
                       </td>
                     )}
                   </tr>
@@ -163,6 +192,32 @@ const BookManagement = () => {
           </h3>
         )}
       </main>
+      {deleteModelOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 p-5 flex items-center justify-center z-50">
+          <div className="w-full bg-white rounded-lg shadow-lg md:w-1/3 p-6 h-64 flex flex-col items-center justify-center text-center">
+            <h2 className="text-xl font-semibold">
+              Are you sure you want to delete this book?
+            </h2>
+            <div className="flex gap-4 mt-4 items-center justify-center">
+              <button
+                onClick={() => setDeleteModelOpen(false)}
+                className="bg-gray-300 text-black px-4 py-2 rounded-md"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  deleteBook(deleteBook);
+                  setDeleteModelOpen(false);
+                }}
+                className="bg-red-600 text-white px-4 py-2 rounded-md"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {addBookPopup && <AddBookPopup />}
       {readBookPopup && <ReadBookPopup book={readBook} />}
       {recordBookPopup && <RecordBookPopup bookId={borrowBookId} />}

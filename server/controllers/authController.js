@@ -6,7 +6,10 @@ import crypto from "crypto";
 import { sendVerificationCode } from "../utils/sendVerificationCode.js";
 import { sendToken } from "../utils/sendToken.js";
 import { sendEmail } from "../utils/sendEmail.js";
-import { genereateForgotPasswordEmailTemplate } from "../utils/emailTemplates.js";
+import {
+  genereateAccountVerifiedEmailTemplate,
+  genereateForgotPasswordEmailTemplate,
+} from "../utils/emailTemplates.js";
 
 export const register = catchAsyncErrors(async (req, res, next) => {
   try {
@@ -18,10 +21,10 @@ export const register = catchAsyncErrors(async (req, res, next) => {
     if (isRegistered) {
       return next(new ErrorHandler("User already exist", 400));
     }
-    const registrationAttemptsByUser = await User.findOne({
-      email,
-      accountVerified: false,
-    });
+    // const registrationAttemptsByUser = await User.findOne({
+    //   email,
+    //   accountVerified: false,
+    // });
 
     // console.log("registrationAttemptsByUser:", registrationAttemptsByUser);
     // if (registrationAttemptsByUser.length >= 5) {
@@ -96,6 +99,14 @@ export const verifyOTP = catchAsyncErrors(async (req, res, next) => {
     user.verificationCode = null;
     user.verificationCodeExpire = null;
     await user.save({ validateModifiedOnly: true });
+
+    const message = genereateAccountVerifiedEmailTemplate(user.name);
+
+    await sendEmail({
+      email: email,
+      subject: "Account Verified (Library Management System)",
+      message,
+    });
 
     sendToken(user, 200, "Account Verified.", res);
   } catch (error) {

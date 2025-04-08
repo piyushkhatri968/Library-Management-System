@@ -19,7 +19,7 @@ config({ path: "./config/config.env" });
 
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL],
+    origin: ["", "http://localhost:5173"],
     methods: ["GET", "PUT", "DELETE", "POST"],
     credentials: true,
   })
@@ -36,9 +36,9 @@ app.use(
 );
 // ------------------------------------------
 
-app.get("/", (req, res)=>{
-  res.send("Server is running...")
-})
+app.get("/", (req, res) => {
+  res.send("Server is running...");
+});
 // ------------------------------------------
 
 app.use("/api/v1/auth", authRouter);

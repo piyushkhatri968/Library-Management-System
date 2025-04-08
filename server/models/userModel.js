@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
+import { Book } from "./bookModel.js";
+import { Borrow } from "./borrowModel.js";
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -88,5 +90,26 @@ userSchema.methods.getResetPasswordToken = function () {
   this.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
   return resetToken;
 };
+
+userSchema.pre(
+  "deleteOne",
+  { document: true, query: false },
+  async function (next) {
+    const userId = this._id;
+
+    try {
+      // Delete all books created by the user (Admins only)
+      await Book.deleteMany({ createdBy: userId });
+
+      // Delete all borrow records related to the user
+      await Borrow.deleteMany({ "user.id": userId });
+
+      next();
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+);
 
 export const User = mongoose.model("User", userSchema);

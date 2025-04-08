@@ -1,6 +1,7 @@
 import { catchAsyncErrors } from "../middlewares/catchAsyncErrors.js";
 import { Book } from "../models/bookModel.js";
 import { User } from "../models/userModel.js";
+import { Borrow } from "../models/borrowModel.js";
 import ErrorHandler from "../middlewares/errorMiddlewares.js";
 
 export const addBook = catchAsyncErrors(async (req, res, next) => {
@@ -14,6 +15,7 @@ export const addBook = catchAsyncErrors(async (req, res, next) => {
     description,
     price,
     quantity,
+    createdBy: req.user._id, // Assign the Admin's user ID
   });
   res.status(201).json({
     success: true,
@@ -28,6 +30,17 @@ export const deleteBook = catchAsyncErrors(async (req, res, next) => {
   if (!book) {
     return next(new ErrorHandler("Book not found.", 404));
   }
+
+  // Delete all borrow records related to this book
+  await Borrow.deleteMany({ "book.id": id });
+
+  // Remove book from all users' borrowedBooks array
+  await User.updateMany(
+    { "borrowedBooks.bookId": id },
+    { $pull: { borrowedBooks: { bookId: id } } }
+  );
+
+  // Delete the book itself
   await book.deleteOne();
   res.status(200).json({
     success: true,
@@ -36,7 +49,7 @@ export const deleteBook = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const getAllBooks = catchAsyncErrors(async (req, res, next) => {
-  const books = await Book.find();
+  const books = await Book.find().populate("createdBy", "name email");
   res.status(200).json({
     success: true,
     books,

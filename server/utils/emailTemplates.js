@@ -57,3 +57,35 @@ export function genereateBookReturnReminderEmailTemplate(name, dueDate) {
     </footer>
 </div>`;
 }
+
+export function genereateAccountVerifiedEmailTemplate(name) {
+  return `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #000; color: #fff;">
+      <h2 style="color: #fff; text-align: center;">Account Verified Successfully</h2>
+      <p style="font-size: 16px; color: #ccc;">Hello ${name},</p>
+      <p style="font-size: 16px; color: #ccc;">Congratulations! Your account has been successfully verified. You can now enjoy full access to our platform.</p>
+      <p style="font-size: 16px; color: #ccc;">If you did not request this verification, please contact our support team immediately.</p>
+      <footer style="margin-top: 20px; text-align: center; font-size: 14px; color: #666;">
+          <p>Thank you,<br>BookWorm Team</p>
+          <p style="font-size: 12px; color: #444;">This is an automated message. Please do not reply to this email.</p>
+      </footer>
+  </div>`;
+}
+
+export function genereateRegisteredAsAdminEmailTemplate(name, email, password) {
+  return `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #000; color: #fff;">
+      <h2 style="color: #fff; text-align: center;">Admin Account Created</h2>
+      <p style="font-size: 16px; color: #ccc;">Hello ${name},</p>
+      <p style="font-size: 16px; color: #ccc;">You have been successfully registered as an <strong>Admin</strong> on our platform.</p>
+
+      <h3 style="color: #fff;">Your Login Credentials:</h3>
+      <p style="font-size: 16px; color: #ccc;"><strong>Email:</strong> ${email}</p>
+      <p style="font-size: 16px; color: #ccc;"><strong>Password:</strong> ${password}</p>
+
+      <p style="color: red; font-size: 14px;"><strong>Note:</strong> Please change your password after your first login for security reasons.</p>
+
+      <footer style="margin-top: 20px; text-align: center; font-size: 14px; color: #666;">
+          <p>Thank you,<br>BookWorm Team</p>
+          <p style="font-size: 12px; color: #444;">This is an automated message. Please do not reply to this email.</p>
+      </footer>
+  </div>`;
+}
