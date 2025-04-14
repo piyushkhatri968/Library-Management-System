@@ -241,12 +241,8 @@ export const logout = () => async (dispatch) => {
     });
     dispatch(authSLice.actions.logoutSuccess(response.data.message));
     dispatch(authSLice.actions.resetAuthSlice());
-
-    // Force clear client-side storage (just in case)
     localStorage.clear();
     sessionStorage.clear();
-
-    // Redirect after successful logout
     window.location.href = "/login"; // Full page reload to clear state
   } catch (error) {
     dispatch(
