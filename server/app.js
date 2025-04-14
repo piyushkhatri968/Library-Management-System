@@ -19,7 +19,10 @@ config({ path: "./config/config.env" });
 
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: [
+      "https://library-management-system-frontend-olive.vercel.app",
+      "http://localhost:5173",
+    ],
     methods: ["GET", "PUT", "DELETE", "POST"],
     credentials: true,
   })
