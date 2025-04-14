@@ -36,10 +36,10 @@ const Header = () => {
           <img src={userIcon} alt="icon" className="w-8 h-8" />
           <div className="flex flex-col">
             <span className="text-sm font-medium sm:text-lg lg:text-xl sm:font-semibold">
-              {user.name}
+              {user?.name}
             </span>
             <span className="text-sm font-medium sm:text-lg sm:font-medium">
-              {user.role}
+              {user?.role}
             </span>
           </div>
         </div>
