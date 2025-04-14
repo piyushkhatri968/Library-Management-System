@@ -136,7 +136,7 @@ export const logout = catchAsyncErrors(async (req, res, next) => {
   try {
     res
       .status(200)
-      .cookie("token", "", {
+      .cookie("token", null, {
         expires: new Date(Date.now()),
         httpOnly: true,
         secure: process.env.NODE_ENV === "production", // must match
@@ -146,7 +146,6 @@ export const logout = catchAsyncErrors(async (req, res, next) => {
         success: true,
         message: "Logged out successfully.",
       });
-
   } catch (error) {
     return next(new ErrorHandler(error), 404);
   }
