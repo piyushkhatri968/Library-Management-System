@@ -218,19 +218,39 @@ export const login = (data) => async (dispatch) => {
 
 //------------------------------
 
+// export const logout = () => async (dispatch) => {
+//   dispatch(authSLice.actions.logoutRequest());
+//   await axios
+//     .get(`${Frontend_URL}/auth/logout`, {
+//       withCredentials: true,
+//     })
+//     .then((res) => {
+//       dispatch(authSLice.actions.logoutSuccess(res.data.message));
+//       dispatch(authSLice.actions.resetAuthSlice());
+//     })
+//     .catch((error) => {
+//       dispatch(authSLice.actions.logoutFailed(error.response.data.message));
+//     });
+// };
+
 export const logout = () => async (dispatch) => {
   dispatch(authSLice.actions.logoutRequest());
-  await axios
-    .get(`${Frontend_URL}/auth/logout`, {
+  try {
+    const response = await axios.get(`${Frontend_URL}/auth/logout`, {
       withCredentials: true,
-    })
-    .then((res) => {
-      dispatch(authSLice.actions.logoutSuccess(res.data.message));
-      dispatch(authSLice.actions.resetAuthSlice());
-    })
-    .catch((error) => {
-      dispatch(authSLice.actions.logoutFailed(error.response.data.message));
     });
+    dispatch(authSLice.actions.logoutSuccess(response.data.message));
+    dispatch(authSLice.actions.resetAuthSlice());
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.href = "/login"; // Full page reload to clear state
+  } catch (error) {
+    dispatch(
+      authSLice.actions.logoutFailed(
+        error.response?.data?.message || "Logout failed"
+      )
+    );
+  }
 };
 
 //------------------------------
