@@ -7,8 +7,10 @@ export const sendToken = (user, statusCode, message, res) => {
         Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
       ),
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      secure: true, // Always true in production
+      sameSite: "None", // Required for cross-domain
+      domain: ".vercel.app", // Allow all vercel subdomains
+      path: "/",
     })
     .json({
       success: true,

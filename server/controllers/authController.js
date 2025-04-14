@@ -133,22 +133,20 @@ export const login = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const logout = catchAsyncErrors(async (req, res, next) => {
-  try {
-    res
-      .status(200)
-      .cookie("token", null, {
-        expires: new Date(Date.now()),
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // must match
-        sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // must match
-      })
-      .json({
-        success: true,
-        message: "Logged out successfully.",
-      });
-  } catch (error) {
-    return next(new ErrorHandler(error), 404);
-  }
+  res
+    .status(200)
+    .cookie("token", "", {
+      expires: new Date(Date.now()),
+      httpOnly: true,
+      secure: true, // Force secure in production
+      sameSite: "None", // Required for cross-domain cookies
+      domain: ".vercel.app", // Allow all vercel subdomains
+      path: "/", // Ensure cookie is accessible on all paths
+    })
+    .json({
+      success: true,
+      message: "Logged out successfully",
+    });
 });
 
 export const getUser = catchAsyncErrors(async (req, res, next) => {
